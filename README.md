@@ -52,4 +52,4 @@ Users can upload datasets and quickly visualize patterns, trends, and correlatio
 
 ## Author
 
-Roti Roy
+swachchho gun
