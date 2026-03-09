@@ -59,33 +59,34 @@ if st.session_state.dark_mode:
         "toggle_label": "Night",
     }
 else:
+    # Day mode: crisp white + deep indigo accent — totally readable, totally different feel
     T = {
-        "bg":           "#f5f0e8",
-        "bg_grad":      "radial-gradient(ellipse 80% 50% at 20% 10%, rgba(255,90,50,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(230,100,30,0.04) 0%, transparent 60%), #f5f0e8",
-        "sidebar":      "#edeae2",
-        "sidebar_bdr":  "rgba(0,0,0,0.07)",
+        "bg":           "#f0f4f8",
+        "bg_grad":      "radial-gradient(ellipse 80% 50% at 20% 10%, rgba(67,97,238,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(76,201,188,0.05) 0%, transparent 60%), #f0f4f8",
+        "sidebar":      "#e4eaf2",
+        "sidebar_bdr":  "rgba(0,0,0,0.08)",
         "card":         "#ffffff",
-        "card2":        "#faf7f2",
-        "text":         "#2a2118",
-        "text_head":    "#1a1510",
-        "text_muted":   "rgba(42,33,24,0.55)",
-        "text_dim":     "rgba(42,33,24,0.4)",
-        "text_faint":   "rgba(42,33,24,0.25)",
-        "accent":       "#e04820",
-        "accent_bg":    "rgba(224,72,32,0.08)",
-        "accent_bdr":   "rgba(224,72,32,0.3)",
-        "accent_glow":  "rgba(224,72,32,0.15)",
-        "blue":         "#1a7fc4",
-        "green":        "#3d8a1e",
-        "divider":      "rgba(0,0,0,0.09)",
+        "card2":        "#f7f9fc",
+        "text":         "#1e2433",
+        "text_head":    "#0f1623",
+        "text_muted":   "rgba(30,36,51,0.6)",
+        "text_dim":     "rgba(30,36,51,0.4)",
+        "text_faint":   "rgba(30,36,51,0.22)",
+        "accent":       "#4361ee",          # deep indigo — very readable on light bg
+        "accent_bg":    "rgba(67,97,238,0.08)",
+        "accent_bdr":   "rgba(67,97,238,0.28)",
+        "accent_glow":  "rgba(67,97,238,0.15)",
+        "blue":         "#0077b6",
+        "green":        "#2d7d46",
+        "divider":      "rgba(0,0,0,0.08)",
         "divider_faint":"rgba(0,0,0,0.05)",
         "input_bg":     "#ffffff",
-        "input_bdr":    "rgba(0,0,0,0.15)",
-        "plot_bg":      "#fdfaf6",
-        "hover_bg":     "rgba(0,0,0,0.02)",
-        "grid":         "rgba(0,0,0,0.05)",
-        "line":         "rgba(0,0,0,0.08)",
-        "tick":         "rgba(42,33,24,0.4)",
+        "input_bdr":    "rgba(0,0,0,0.14)",
+        "plot_bg":      "#f7f9fc",
+        "hover_bg":     "rgba(0,0,0,0.025)",
+        "grid":         "rgba(0,0,0,0.055)",
+        "line":         "rgba(0,0,0,0.09)",
+        "tick":         "rgba(30,36,51,0.45)",
         "toggle_icon":  "☀️",
         "toggle_label": "Day",
     }
@@ -336,7 +337,7 @@ hr {{ border-color: {T['divider']} !important; margin: 1.5rem 0 !important; }}
 if st.session_state.dark_mode:
     COLORS = ["#ff5a32","#50b4ff","#a8e063","#f7c948","#c678dd","#56b6c2","#e06c75","#d19a66"]
 else:
-    COLORS = ["#e04820","#1a7fc4","#3d8a1e","#c47d00","#8b44b8","#1a8a7c","#b83248","#a05c00"]
+    COLORS = ["#4361ee","#0077b6","#2d7d46","#b5500a","#7b2d8b","#0e7490","#9b2335","#7a5c00"]
 
 def style_fig(fig):
     fig.update_layout(
@@ -620,14 +621,49 @@ with st.sidebar:
         st.caption("Upload a CSV on the main page to start.")
 
 # ─────────────────────────────────────────────
-#  THEME TOGGLE  (top of every page, right-aligned)
+#  THEME TOGGLE  — tiny fixed pill, no layout impact
 # ─────────────────────────────────────────────
-icon  = "☀️  Day" if st.session_state.dark_mode else "🌙  Night"
-_sp, _tb = st.columns([10, 1])
-with _tb:
-    if st.button(icon, key="theme_fab"):
+_t_icon  = "☀️" if st.session_state.dark_mode else "🌙"
+_t_label = "Day" if st.session_state.dark_mode else "Night"
+# Render as a zero-height container so it never pushes content down
+st.markdown(f"""
+<div style="height:0;overflow:visible;position:relative;z-index:9999;">
+  <div id="theme-pill" style="
+    position:fixed;top:12px;right:16px;z-index:9999;
+    background:{T['card']};border:1px solid {T['divider']};
+    border-radius:20px;padding:4px 11px 4px 8px;
+    display:inline-flex;align-items:center;gap:5px;
+    font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;
+    color:{T['text_dim']};
+    box-shadow:{'0 2px 12px rgba(0,0,0,0.35)' if st.session_state.dark_mode else '0 2px 10px rgba(0,0,0,0.1)'};
+    cursor:pointer;user-select:none;
+    transition:all 0.15s;
+  " onclick="document.getElementById('theme-trigger').click()">
+    {_t_icon} <span style="text-transform:uppercase;">{_t_label}</span>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+# Hidden real Streamlit button that the pill onclick triggers
+_hc1, _hc2 = st.columns([100, 1])
+with _hc2:
+    if st.button("t", key="theme_fab", help="Toggle theme"):
         st.session_state.dark_mode = not st.session_state.dark_mode
         st.rerun()
+# Alias the hidden button so the pill's onclick can find it
+st.markdown("""
+<style>
+/* Hide the real toggle button visually but keep it clickable */
+[data-testid="column"]:last-child .stButton>button {
+    opacity:0 !important;width:1px !important;height:1px !important;
+    min-width:0 !important;padding:0 !important;border:none !important;
+    position:absolute !important;overflow:hidden !important;
+}
+</style>
+<script>
+var btn = window.parent.document.querySelector('[data-testid="stMainBlockContainer"] button[kind="secondary"]:last-of-type');
+if(btn) btn.id = "theme-trigger";
+</script>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  WELCOME SCREEN
