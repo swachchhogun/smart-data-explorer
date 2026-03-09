@@ -146,24 +146,6 @@ html,body,[data-testid="stAppViewContainer"]{{background:{T['bg']} !important;co
 [data-testid="stFileUploader"]{{background:{T['card']} !important;border:1px dashed {T['accent_bdr']} !important;padding:1rem !important;}}
 [data-testid="stFileUploader"] *{{color:{T['text']} !important;}}
 [data-testid="stFileUploaderDropzone"]{{background:transparent !important;padding:1.5rem !important;}}
-[data-testid="stFileUploader"] button,[data-testid="stFileUploaderDropzone"] button{{
-    background:{T['accent_bg']} !important;
-    border:1px solid {T['accent_bdr']} !important;
-    color:{T['accent']} !important;
-    font-family:'DM Mono',monospace !important;
-    font-size:10px !important;
-    letter-spacing:2px !important;
-    text-transform:uppercase !important;
-    padding:0.5rem 1.2rem !important;
-    border-radius:2px !important;
-    width:auto !important;
-    transition:all 0.2s !important;
-}}
-[data-testid="stFileUploader"] button:hover,[data-testid="stFileUploaderDropzone"] button:hover{{
-    background:{T['accent']} !important;
-    color:#fff !important;
-    border-color:{T['accent']} !important;
-}}
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"]{{background:transparent !important;border-bottom:1px solid {T['divider']} !important;gap:0 !important;overflow-x:auto !important;}}
@@ -234,24 +216,7 @@ html,body,[data-testid="stAppViewContainer"]{{background:{T['bg']} !important;co
 .sidebar-tagline{{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:{T['text_faint']};text-transform:uppercase;margin-bottom:1.5rem;}}
 
 /* ── Theme toggle pill ── */
-.theme-pill-wrap{{position:fixed;top:0.75rem;right:1rem;z-index:999;}}
-.theme-pill-wrap .stButton>button{{
-    border-radius:20px !important;
-    padding:5px 16px 5px 12px !important;
-    font-size:10px !important;
-    letter-spacing:1px !important;
-    box-shadow:{T['pill_shadow']} !important;
-    white-space:nowrap !important;
-    background:{T['card']} !important;
-    border:1px solid {T['input_bdr']} !important;
-    color:{T['text']} !important;
-    width:auto !important;
-}}
-.theme-pill-wrap .stButton>button:hover{{
-    background:{T['accent']} !important;
-    border-color:{T['accent']} !important;
-    color:#fff !important;
-}}
+div[data-testid="column"]:last-of-type .stButton>button{{border-radius:20px !important;padding:5px 14px 5px 10px !important;font-size:10px !important;letter-spacing:1px !important;box-shadow:{T['pill_shadow']} !important;white-space:nowrap !important;}}
 
 /* ── Footer ── */
 .footer{{position:fixed;bottom:0;left:0;right:0;z-index:100;background:{T['footer_bg']};border-top:1px solid {T['divider']};padding:7px 2rem;display:flex;align-items:center;justify-content:space-between;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:{T['text_faint']};}}
@@ -421,7 +386,7 @@ def get_ai_insights(data_json: str, question: str = "") -> str:
     try:
         r = requests.post("https://api.groq.com/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
-            json={"model":"llama3-8b-8192","messages":[{"role":"user","content":prompt}],
+            json={"model":"llama-3.3-70b-versatile","messages":[{"role":"user","content":prompt}],
                   "max_tokens":800,"temperature":0.3}, timeout=20)
         d = r.json()
         if "choices" in d: return d["choices"][0]["message"]["content"]
@@ -518,7 +483,7 @@ def generate_pdf_report(df, filename, ai_text, clean_report):
         if clean_report:
             story+=[HR(),Paragraph("CLEANING APPLIED",S_SE)]
             for note in clean_report: story.append(Paragraph(f"✓  {note}",S_AI))
-        story+=[PageBreak(),Paragraph("AI INSIGHTS",S_SE),Paragraph("Powered by Llama 3 via Groq (free)",S_MO),SP(8)]
+        story+=[PageBreak(),Paragraph("AI INSIGHTS",S_SE),Paragraph("Powered by Llama 3.3 70B via Groq (free)",S_MO),SP(8)]
         for line in ai_text.split("\n"):
             line=line.strip()
             if line: story.append(Paragraph(line,S_AI)); story.append(SP(3))
@@ -561,14 +526,12 @@ with st.sidebar:
         st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:2px;color:{T["text_faint"]};text-transform:uppercase;padding:0.5rem 0;">Upload a CSV on the main page to unlock filters & export.</div>', unsafe_allow_html=True)
 
 # ── Theme toggle ──────────────────────────────────────────
-_icon = "☀️ Day" if st.session_state.dark_mode else "🌙 Night"
-st.markdown('<div class="theme-pill-wrap">', unsafe_allow_html=True)
+_icon = "☀️  Day" if st.session_state.dark_mode else "🌙  Night"
 _gap, _pill = st.columns([30, 1])
 with _pill:
     if st.button(_icon, key="theme_toggle"):
         st.session_state.dark_mode = not st.session_state.dark_mode
         st.rerun()
-st.markdown('</div>', unsafe_allow_html=True)
 
 # ── Welcome ───────────────────────────────────────────────
 if not st.session_state.show_app:
@@ -580,7 +543,7 @@ if not st.session_state.show_app:
         <div class="feature-grid">
             <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Auto Clean</div><div class="feature-desc">Nulls filled · Dupes removed · Types inferred</div></div>
             <div class="feature-card"><div class="feature-icon">◈</div><div class="feature-title">8 Chart Modes</div><div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend</div></div>
-            <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Free AI</div><div class="feature-desc">Llama 3 via Groq · No cost · Instant insights</div></div>
+            <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Free AI</div><div class="feature-desc">Llama 3.3 70B via Groq · No cost · Instant insights</div></div>
             <div class="feature-card"><div class="feature-icon">📄</div><div class="feature-title">Export</div><div class="feature-desc">PDF report · CSV · Excel · Stats table</div></div>
         </div>
     </div>""", unsafe_allow_html=True)
@@ -692,7 +655,7 @@ with tab_explore:
         if st.button("◈ Add annotation", key="add_ann"):
             if ann_text.strip():
                 st.session_state.annotations.append({"text": ann_text.strip(), "x": ann_x, "y": ann_y, "xref":"paper","yref":"paper","arrow": ann_arrow})
-                st.toast(f"Added: {ann_text.strip()}", icon="✅")
+                st.toast(f"Added: {ann_text.strip()}", icon="◈")
             else:
                 st.toast("Enter some text first", icon="⚠️")
         if st.session_state.annotations:
@@ -951,12 +914,12 @@ with tab_types:
     with col1:
         if st.button("◈ Apply override", key="apply_type"):
             if sel_type != "Auto (keep as-is)":
-                st.session_state.type_overrides[sel_col] = sel_type; st.toast(f"'{sel_col}' → {sel_type}", icon="✅")
+                st.session_state.type_overrides[sel_col] = sel_type; st.toast(f"'{sel_col}' → {sel_type}", icon="✓")
             else:
-                st.session_state.type_overrides.pop(sel_col, None); st.toast(f"Override removed for '{sel_col}'", icon="✅")
+                st.session_state.type_overrides.pop(sel_col, None); st.toast(f"Override removed for '{sel_col}'", icon="✓")
     with col2:
         if st.button("✕ Clear all overrides", key="clear_types"):
-            st.session_state.type_overrides = {}; st.toast("All overrides cleared", icon="✅")
+            st.session_state.type_overrides = {}; st.toast("All overrides cleared", icon="✓")
     if st.session_state.type_overrides:
         st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown('<div class="section-label">Active Overrides</div>', unsafe_allow_html=True)
@@ -1037,12 +1000,12 @@ with tab_ai:
         with st.spinner("Thinking…"):
             result = get_ai_insights(data_json, question)
         st.session_state.last_ai_text = result
-        st.markdown(ai_card_html("AI Answer · Llama 3 via Groq", result), unsafe_allow_html=True)
+        st.markdown(ai_card_html("AI Answer · Llama 3.3 70B via Groq", result), unsafe_allow_html=True)
     else:
         with st.spinner("Generating auto insights…"):
             auto = get_ai_insights(data_json)
         st.session_state.last_ai_text = auto
-        st.markdown(ai_card_html("Auto Insights · Llama 3 via Groq", auto), unsafe_allow_html=True)
+        st.markdown(ai_card_html("Auto Insights · Llama 3.3 70B via Groq", auto), unsafe_allow_html=True)
 
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown('<div class="section-label">Statistical Quick Insights</div>', unsafe_allow_html=True)
@@ -1107,7 +1070,7 @@ st.markdown(f"""
     <div><span class="footer-brand">DataLens</span> &nbsp;◈&nbsp; Smart Data Explorer</div>
     <div class="footer-right">
         <span>{filtered_df.shape[0]:,} rows · {filtered_df.shape[1]} cols</span>
-        <span>Groq · Llama 3</span>
+        <span>Groq · Llama 3.3 70B</span>
         <span><span class="kbd">T</span> theme</span>
         <span>{datetime.datetime.now().strftime('%d %b %Y')}</span>
     </div>
