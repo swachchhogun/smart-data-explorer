@@ -53,3 +53,5 @@ Users can upload datasets and quickly visualize patterns, trends, and correlatio
 ## Author
 
 swachchho gun
+
+This project is licensed under the MIT License.
