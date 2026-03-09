@@ -297,6 +297,36 @@ html, body, [data-testid="stAppViewContainer"] {{
 hr {{ border-color: {T['divider']} !important; margin: 1.5rem 0 !important; }}
 .stAlert {{ background: {T['accent_bg']} !important; border: 1px solid {T['accent_bdr']} !important; color: {T['text']} !important; }}
 .stToggle label {{ font-family: 'DM Mono', monospace !important; font-size: 10px !important; text-transform: uppercase !important; color: {T['text_dim']} !important; }}
+
+/* ── Floating theme toggle ── */
+.theme-fab {{
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    z-index: 9999;
+    background: {T['card']};
+    border: 1px solid {T['divider']};
+    color: {T['text_muted']};
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    padding: 7px 14px 7px 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: {'0 2px 16px rgba(0,0,0,0.4)' if st.session_state.dark_mode else '0 2px 16px rgba(0,0,0,0.12)'};
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.15s;
+    text-decoration: none;
+    user-select: none;
+}}
+.theme-fab:hover {{
+    background: {T['accent']};
+    border-color: {T['accent']};
+    color: white;
+    box-shadow: 0 4px 20px {T['accent_glow']};
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -560,12 +590,6 @@ with st.sidebar:
     st.markdown(f'<div class="sidebar-brand">Data<span>Lens</span></div>', unsafe_allow_html=True)
     st.markdown(f'<div class="sidebar-tagline">◈ Smart Explorer</div>', unsafe_allow_html=True)
 
-    # Theme toggle
-    mode_label = "☀️  Day mode" if st.session_state.dark_mode else "🌙  Night mode"
-    if st.button(mode_label, key="theme_btn"):
-        st.session_state.dark_mode = not st.session_state.dark_mode
-        st.rerun()
-
     if st.session_state.get("working_df") is not None:
         wdf = st.session_state.working_df
         num_sb = wdf.select_dtypes(include="number").columns.tolist()
@@ -594,6 +618,16 @@ with st.sidebar:
             st.rerun()
     else:
         st.caption("Upload a CSV on the main page to start.")
+
+# ─────────────────────────────────────────────
+#  THEME TOGGLE  (top of every page, right-aligned)
+# ─────────────────────────────────────────────
+icon  = "☀️  Day" if st.session_state.dark_mode else "🌙  Night"
+_sp, _tb = st.columns([10, 1])
+with _tb:
+    if st.button(icon, key="theme_fab"):
+        st.session_state.dark_mode = not st.session_state.dark_mode
+        st.rerun()
 
 # ─────────────────────────────────────────────
 #  WELCOME SCREEN
