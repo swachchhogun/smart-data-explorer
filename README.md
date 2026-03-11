@@ -1,59 +1,177 @@
-DataLens — Smart Data Explorer
+🚀 DataLens — Smart Data Explorer
 
-Upload any CSV. Get instant charts, AI insights, and a beautiful PDF report — all free.
+Upload any CSV and instantly generate interactive charts, AI insights, and a beautiful PDF report — all in one place.
 
-Live Demo: smart-data-explorer-mgappjprtpxzeqvn69pew65.streamlit.app
+🔗 Live Demo
+https://smart-data-explorer-mgappjprtpxzeqvn69pew65.streamlit.app
 
-What it does
-DataLens is a no-code data analysis web app. Drop in a CSV and instantly get:
+✨ Features
+📂 Upload Any Dataset
 
-Auto data cleaning — nulls filled, duplicates removed, types inferred
-9 chart modes — histogram, heatmap, scatter matrix, correlation, trend over time, box plots, and more
-AI-powered insights — ask natural language questions about your data via Llama 3.3 70B (Groq, free)
-Data quality profiling — column health scores, outlier detection via IQR, completeness metrics
-Column type editor — override auto-detected types and watch changes apply live across all tabs
-PDF report generator — exports dataset overview, stats, cleaning log, and AI insights as a formatted PDF
-Sidebar filters — slice by category or numeric range; all charts update instantly
-Export — filtered CSV or full XLSX download
+Simply upload a CSV file and DataLens automatically analyzes it.
 
+🧹 Automatic Data Cleaning
 
-Built with
+Null value handling
 
-Python · Streamlit · Pandas · NumPy
-Plotly — interactive charts
-Groq API — free LLM inference (Llama 3.3 70B)
-ReportLab — PDF generation
+Duplicate removal
 
+Automatic type detection
 
-Run locally
-bashgit clone https://github.com/swachchhogun/smart-data-explorer
+Dataset health profiling
+
+📊 Interactive Visualizations
+
+Generate 9 chart modes instantly:
+
+Histogram
+
+Heatmap
+
+Scatter plot
+
+Scatter matrix
+
+Correlation analysis
+
+Box plots
+
+Trend over time
+
+Category comparisons
+
+Distribution analysis
+
+All charts are interactive and powered by Plotly.
+
+🤖 AI-Powered Insights
+
+Ask questions about your dataset in natural language.
+
+Example:
+
+Which columns are most correlated?
+What trends exist in this dataset?
+Which values are outliers?
+
+Powered by Llama 3.3 70B via Groq API.
+
+📈 Data Quality Profiling
+
+Automatically calculates:
+
+Column health scores
+
+Completeness metrics
+
+Outlier detection using the IQR method
+
+📑 PDF Report Generator
+
+Export a professional report containing:
+
+Dataset overview
+
+Statistical summaries
+
+Data cleaning logs
+
+AI insights
+
+🎛 Smart Filters
+
+Filter your dataset by:
+
+Category
+
+Numeric ranges
+
+All charts update instantly.
+
+📤 Export Options
+
+Download results as:
+
+CSV
+
+XLSX
+
+PDF report
+
+🛠 Built With
+
+Core Technologies
+
+Python
+
+Streamlit
+
+Pandas
+
+NumPy
+
+Visualization
+
+Plotly
+
+AI
+
+Groq API
+
+Llama 3.3 70B
+
+Reporting
+
+ReportLab
+
+⚙️ Run Locally
+
+Clone the repository
+
+git clone https://github.com/swachchhogun/smart-data-explorer
 cd smart-data-explorer
+
+Install dependencies
+
 pip install -r requirements.txt
+
+Run the app
+
 streamlit run app.py
-To enable AI features, add your free Groq API key:
+🔑 Enable AI Features
 
-Sign up at console.groq.com — no card needed
-Create an API key
-Create a .streamlit/secrets.toml file:
+1️⃣ Create a free account
+https://console.groq.com
 
-tomlGROQ_API_KEY = "gsk_xxxx"
-```
+2️⃣ Generate an API key
 
----
+3️⃣ Create this file:
 
-## Project structure
-```
+.streamlit/secrets.toml
+
+Add:
+
+GROQ_API_KEY = "gsk_xxxxx"
+📂 Project Structure
 smart-data-explorer/
-├── app.py               # Main application
-├── requirements.txt     # Dependencies
+│
+├── app.py
+├── requirements.txt
+│
 └── .streamlit/
-    └── secrets.toml     # API keys (not committed)
+    └── secrets.toml
+📊 Feature Summary
+Feature	Details
+File Support	CSV up to 200MB
+Chart Types	9 visualization modes
+AI Model	Llama 3.3 70B via Groq
+Export Formats	CSV, XLSX, PDF
+Deployment	Streamlit Cloud
+Cost	Completely free
+👨‍💻 Author
 
-Features at a glance
-FeatureDetailsFile supportCSV up to 200MBChart types9 modesAI modelLlama 3.3 70B via GroqExport formatsCSV, XLSX, PDFDeploymentStreamlit CloudCostCompletely free
+Roti Roy
 
-Features at a glance
-FeatureDetailsFile supportCSV up to 200MBChart types9 modesAI modelLlama 3.3 70B via GroqExport formatsCSV, XLSX, PDFDeploymentStreamlit CloudCostCompletely free
+📜 License
 
-Author
-Swachchho Gun · swachchhogun@gmail.com · github.com/swachchhogun
+MIT License
