@@ -1,5 +1,3 @@
-Here's a clean README for DataLens:
-
 DataLens — Smart Data Explorer
 
 Upload any CSV. Get instant charts, AI insights, and a beautiful PDF report — all free.
@@ -50,6 +48,9 @@ smart-data-explorer/
 ├── requirements.txt     # Dependencies
 └── .streamlit/
     └── secrets.toml     # API keys (not committed)
+
+Features at a glance
+FeatureDetailsFile supportCSV up to 200MBChart types9 modesAI modelLlama 3.3 70B via GroqExport formatsCSV, XLSX, PDFDeploymentStreamlit CloudCostCompletely free
 
 Features at a glance
 FeatureDetailsFile supportCSV up to 200MBChart types9 modesAI modelLlama 3.3 70B via GroqExport formatsCSV, XLSX, PDFDeploymentStreamlit CloudCostCompletely free
