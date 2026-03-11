@@ -168,9 +168,10 @@ AI Model	Llama 3.3 70B via Groq
 Export Formats	CSV, XLSX, PDF
 Deployment	Streamlit Cloud
 Cost	Completely free
+
 👨‍💻 Author
 
-Roti Roy
+swachchho gun 
 
 📜 License
 
