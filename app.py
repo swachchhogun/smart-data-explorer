@@ -515,8 +515,7 @@ def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COL
         elif ct == "scatter":
             if x and y:
                 fig = px.scatter(plot_df, x=x, y=y, color=color, title=title,
-                                 opacity=0.72, color_discrete_sequence=COLORS,
-                                 trendline="ols" if not color else None)
+                                 opacity=0.72, color_discrete_sequence=COLORS)
                 if not color: fig.update_traces(marker=dict(color=accent, size=6))
             else:
                 return None, "Scatter plot needs X and Y columns."
@@ -544,14 +543,22 @@ def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COL
             if not color: fig.update_traces(fillcolor=T["accent_glow"], line_color=accent)
 
         elif ct == "pie":
-            if x:
-                vc = plot_df[x].value_counts().reset_index()
-                vc.columns = [x, "count"]
-                vals = y if (y and y in plot_df.columns) else "count"
-                fig = px.pie(vc if vals == "count" else plot_df, names=x, values=vals,
-                             title=title, color_discrete_sequence=COLORS, hole=0.3)
+            # AI sometimes puts the category in color instead of x — fall back gracefully
+            name_col = x or color
+            if name_col and name_col in plot_df.columns:
+                if y and y in plot_df.columns:
+                    # aggregate y by name_col
+                    agg_df = plot_df.groupby(name_col)[y].sum().reset_index()
+                    fig = px.pie(agg_df, names=name_col, values=y,
+                                 title=title, color_discrete_sequence=COLORS, hole=0.3)
+                else:
+                    vc = plot_df[name_col].value_counts().reset_index()
+                    vc.columns = [name_col, "count"]
+                    fig = px.pie(vc, names=name_col, values="count",
+                                 title=title, color_discrete_sequence=COLORS, hole=0.3)
+                fig.update_traces(textfont=dict(family="DM Mono", size=10))
             else:
-                return None, "Pie chart needs a category column."
+                return None, "Pie chart needs a category column. Try mentioning a specific column name."
 
         elif ct == "area":
             if x and y:
@@ -940,7 +947,7 @@ with tab_explore:
                 size_col  = st.selectbox("Size by (optional)", ["None"]+numeric_cols, key="sc_sz")
                 ca = None if color_col=="None" else color_col; sa = None if size_col=="None" else size_col
                 fig = px.scatter(filtered_df, x=x_col, y=y_col, color=ca, size=sa, title=f"{y_col} vs {x_col}",
-                                 opacity=0.72, trendline="ols" if ca is None else None,
+                                 opacity=0.72,
                                  color_discrete_sequence=COLORS, color_continuous_scale=[[0,T["card"]],[1,accent]])
                 if ca is None and sa is None:
                     fig.update_traces(marker=dict(color=accent, size=6, line=dict(color="rgba(0,0,0,0.12)", width=1)))
