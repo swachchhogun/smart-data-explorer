@@ -1029,23 +1029,31 @@ with tab_nl:
     for i, ex in enumerate(examples):
         with ex_cols[i % 3]:
             if st.button(ex, key=f"nl_ex_{i}"):
-                st.session_state["nl_prompt"] = ex
-                st.rerun()
+                st.session_state["nl_run_prompt"] = ex
+                st.session_state["nl_auto_run"] = True
 
     st.markdown("<br>", unsafe_allow_html=True)
     nl_prompt = st.text_input(
         "Describe your chart",
-        value=st.session_state.get("nl_prompt", ""),
         placeholder='e.g. "bar chart of average sales by region" or "scatter plot of age vs income"',
         key="nl_input"
     )
     nl_go = st.button("◈ Generate Chart", use_container_width=True, key="nl_go")
 
+    # Determine what to run: manual input or example button
     if nl_go and nl_prompt.strip():
-        st.session_state["nl_prompt"] = nl_prompt.strip()
+        st.session_state["nl_run_prompt"] = nl_prompt.strip()
+        st.session_state["nl_auto_run"] = True
+
+    run_prompt = st.session_state.get("nl_run_prompt", "")
+    should_run = st.session_state.pop("nl_auto_run", False)
+
+    if should_run and run_prompt:
+        # Show which prompt is being used
+        st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:{T["text_dim"]};margin-bottom:0.75rem;">◈ Running: <span style="color:{T["accent"]}">{run_prompt}</span></div>', unsafe_allow_html=True)
         with st.spinner("Reading your request…"):
             spec = nl_to_chart_spec(
-                nl_prompt.strip(),
+                run_prompt,
                 list(filtered_df.columns),
                 numeric_cols, cat_cols
             )
@@ -1060,7 +1068,6 @@ with tab_nl:
         elif spec.get("error"):
             st.markdown(f'<div class="error-box"><strong>Could not generate chart</strong><br>{spec["error"]}<br><br>Try rephrasing — e.g. mention a specific column name from your dataset.</div>', unsafe_allow_html=True)
         else:
-            # Show what AI decided
             x_lbl  = spec.get("x") or "—"
             y_lbl  = spec.get("y") or "—"
             ct_lbl = spec.get("chart_type", "—").title()
@@ -1079,9 +1086,9 @@ with tab_nl:
                 st.markdown(f'<div class="error-box"><strong>Render error</strong><br>{err}</div>', unsafe_allow_html=True)
             else:
                 st.plotly_chart(fig, use_container_width=True)
-                st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:{T["text_faint"]};margin-top:0.5rem;">Generated from: "{nl_prompt.strip()}"</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:{T["text_faint"]};margin-top:0.5rem;">Generated from: "{run_prompt}"</div>', unsafe_allow_html=True)
 
-    elif not nl_prompt.strip() and not nl_go:
+    elif not run_prompt:
         # Show available columns as inspiration
         st.markdown(f'<div class="section-label">Your columns</div>', unsafe_allow_html=True)
         cols_html = "".join([
