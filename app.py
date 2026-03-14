@@ -143,9 +143,28 @@ html,body,[data-testid="stAppViewContainer"]{{background:{T['bg']} !important;co
 .stDownloadButton>button:hover{{background:{T['accent']} !important;color:white !important;border-color:{T['accent']} !important;}}
 
 /* ── File uploader ── */
-[data-testid="stFileUploader"]{{background:{T['card']} !important;border:1px dashed {T['accent_bdr']} !important;padding:1rem !important;}}
+[data-testid="stFileUploader"]{{background:{T['card']} !important;border:1px dashed {T['accent_bdr']} !important;padding:1rem !important;transition:border-color 0.2s !important;}}
+[data-testid="stFileUploader"]:hover{{border-color:{T['accent']} !important;}}
 [data-testid="stFileUploader"] *{{color:{T['text']} !important;}}
 [data-testid="stFileUploaderDropzone"]{{background:transparent !important;padding:1.5rem !important;}}
+[data-testid="stFileUploader"] button,[data-testid="stFileUploaderDropzone"] button{{
+    background:{T['accent_bg']} !important;
+    border:1px solid {T['accent_bdr']} !important;
+    color:{T['accent']} !important;
+    font-family:'DM Mono',monospace !important;
+    font-size:10px !important;
+    letter-spacing:2px !important;
+    text-transform:uppercase !important;
+    padding:0.5rem 1.2rem !important;
+    border-radius:2px !important;
+    width:auto !important;
+    transition:all 0.2s !important;
+}}
+[data-testid="stFileUploader"] button:hover,[data-testid="stFileUploaderDropzone"] button:hover{{
+    background:{T['accent']} !important;
+    color:#fff !important;
+    border-color:{T['accent']} !important;
+}}
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"]{{background:transparent !important;border-bottom:1px solid {T['divider']} !important;gap:0 !important;overflow-x:auto !important;}}
@@ -216,7 +235,37 @@ html,body,[data-testid="stAppViewContainer"]{{background:{T['bg']} !important;co
 .sidebar-tagline{{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;color:{T['text_faint']};text-transform:uppercase;margin-bottom:1.5rem;}}
 
 /* ── Theme toggle pill ── */
-div[data-testid="column"]:last-of-type .stButton>button{{border-radius:20px !important;padding:5px 14px 5px 10px !important;font-size:10px !important;letter-spacing:1px !important;box-shadow:{T['pill_shadow']} !important;white-space:nowrap !important;}}
+.theme-pill-wrap{{position:fixed;top:0.75rem;right:1rem;z-index:999;}}
+.theme-pill-wrap .stButton>button{{
+    border-radius:20px !important;
+    padding:5px 16px 5px 12px !important;
+    font-size:10px !important;
+    letter-spacing:1px !important;
+    box-shadow:{T['pill_shadow']} !important;
+    white-space:nowrap !important;
+    background:{T['card']} !important;
+    border:1px solid {T['input_bdr']} !important;
+    color:{T['text']} !important;
+    width:auto !important;
+}}
+.theme-pill-wrap .stButton>button:hover{{
+    background:{T['accent']} !important;
+    border-color:{T['accent']} !important;
+    color:#fff !important;
+}}
+
+/* ── Scroll to top button ── */
+#scroll-top-btn{{
+    position:fixed;bottom:3.5rem;right:1rem;z-index:200;
+    width:32px;height:32px;border-radius:50%;
+    background:{T['card']};border:1px solid {T['divider']};
+    color:{T['text_dim']};font-size:14px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;transition:opacity 0.3s,background 0.2s;
+    box-shadow:{T['pill_shadow']};
+}}
+#scroll-top-btn:hover{{background:{T['accent']};color:#fff;border-color:{T['accent']};}}
+#scroll-top-btn.visible{{opacity:1;}}
 
 /* ── Footer ── */
 .footer{{position:fixed;bottom:0;left:0;right:0;z-index:100;background:{T['footer_bg']};border-top:1px solid {T['divider']};padding:7px 2rem;display:flex;align-items:center;justify-content:space-between;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:{T['text_faint']};}}
@@ -231,6 +280,12 @@ hr{{border-color:{T['divider']} !important;margin:1.5rem 0 !important;}}
 [data-testid="stExpander"]{{border:1px solid {T['divider']} !important;background:{T['card']} !important;}}
 [data-testid="stExpander"] summary{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1.5px !important;text-transform:uppercase !important;color:{T['text_dim']} !important;}}
 [data-testid="stDataFrame"]{{border:1px solid {T['divider']} !important;box-shadow:{T['card_shadow']};}}
+.stRadio label{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1px !important;text-transform:uppercase !important;color:{T['text_dim']} !important;}}
+.stRadio [data-testid="stMarkdownContainer"] p{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1px !important;}}
+[data-testid="stSlider"] label{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1.5px !important;text-transform:uppercase !important;color:{T['text_dim']} !important;}}
+[data-testid="stSlider"] [data-testid="stThumbValue"]{{font-family:'DM Mono',monospace !important;font-size:10px !important;color:{T['accent']} !important;}}
+.stSpinner>div{{border-top-color:{T['accent']} !important;}}
+[data-testid="stMarkdownContainer"] p{{color:{T['text_muted']};line-height:1.7;}}
 </style>
 
 <script>
@@ -244,6 +299,22 @@ document.addEventListener('keydown', function(e) {{
         }});
     }}
 }});
+
+// Scroll-to-top button
+(function() {{
+    var btn = document.createElement('button');
+    btn.id = 'scroll-top-btn';
+    btn.innerHTML = '↑';
+    btn.title = 'Back to top';
+    btn.onclick = function() {{ window.parent.document.querySelector('.main').scrollTo({{top:0,behavior:'smooth'}}); }};
+    document.body.appendChild(btn);
+    var mainEl = window.parent.document.querySelector('.main');
+    if (mainEl) {{
+        mainEl.addEventListener('scroll', function() {{
+            btn.classList.toggle('visible', this.scrollTop > 300);
+        }});
+    }}
+}})();
 </script>
 """, unsafe_allow_html=True)
 
@@ -526,12 +597,14 @@ with st.sidebar:
         st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:2px;color:{T["text_faint"]};text-transform:uppercase;padding:0.5rem 0;">Upload a CSV on the main page to unlock filters & export.</div>', unsafe_allow_html=True)
 
 # ── Theme toggle ──────────────────────────────────────────
-_icon = "☀️  Day" if st.session_state.dark_mode else "🌙  Night"
+_icon = "☀️ Day" if st.session_state.dark_mode else "🌙 Night"
+st.markdown('<div class="theme-pill-wrap">', unsafe_allow_html=True)
 _gap, _pill = st.columns([30, 1])
 with _pill:
     if st.button(_icon, key="theme_toggle"):
         st.session_state.dark_mode = not st.session_state.dark_mode
         st.rerun()
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ── Welcome ───────────────────────────────────────────────
 if not st.session_state.show_app:
@@ -539,12 +612,31 @@ if not st.session_state.show_app:
     <div class="welcome-wrap">
         <div class="welcome-eyebrow">◈ Smart Data Explorer</div>
         <div class="welcome-title">Data<span>Lens</span></div>
-        <div class="welcome-sub">Upload any CSV and get instant charts, statistics, AI-powered insights, and a beautiful PDF report — all free.</div>
+        <div class="welcome-sub">Drop any CSV. Get instant visualizations, AI-powered analysis, data quality profiling, and a formatted PDF report — completely free, no signup needed.</div>
         <div class="feature-grid">
-            <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Auto Clean</div><div class="feature-desc">Nulls filled · Dupes removed · Types inferred</div></div>
-            <div class="feature-card"><div class="feature-icon">◈</div><div class="feature-title">8 Chart Modes</div><div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend</div></div>
-            <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Free AI</div><div class="feature-desc">Llama 3.3 70B via Groq · No cost · Instant insights</div></div>
-            <div class="feature-card"><div class="feature-icon">📄</div><div class="feature-title">Export</div><div class="feature-desc">PDF report · CSV · Excel · Stats table</div></div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Auto Clean</div>
+                <div class="feature-desc">Nulls · Dupes · Type inference · Datetime parsing</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">◈</div>
+                <div class="feature-title">9 Chart Modes</div>
+                <div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend · Correlation</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">Free AI</div>
+                <div class="feature-desc">Llama 3.3 70B via Groq · Ask anything about your data</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📄</div>
+                <div class="feature-title">Export</div>
+                <div class="feature-desc">PDF report · CSV · Excel · Stats table</div>
+            </div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:{T['text_faint']};text-transform:uppercase;margin-bottom:2rem;">
+            Supports CSV up to 200MB &nbsp;·&nbsp; No signup &nbsp;·&nbsp; No data stored
         </div>
     </div>""", unsafe_allow_html=True)
     _, mid, _ = st.columns([1,2,1])
@@ -617,13 +709,16 @@ st.markdown(f"""<div class="metrics-row">
 </div>""", unsafe_allow_html=True)
 
 dot_color = T["green"] if completeness >= 80 else (T["yellow"] if completeness >= 50 else T["accent"])
-clean_txt = f"{len(clean_report)} cleanings applied" if (use_cleaned and clean_report) else "raw data"
-filter_txt = f"{filtered_df.shape[0]:,} of {base_df.shape[0]:,} rows" if filtered_df.shape[0] != base_df.shape[0] else "no active filters"
+clean_txt = f"{len(clean_report)} ops applied" if (use_cleaned and clean_report) else "raw mode"
+filter_active = filtered_df.shape[0] != base_df.shape[0]
+filter_txt = f"{filtered_df.shape[0]:,} / {base_df.shape[0]:,} rows" if filter_active else "all rows"
+filter_clr = T["accent"] if filter_active else T["text_dim"]
 st.markdown(f"""<div class="status-bar">
-    <div class="status-item"><span class="status-dot" style="background:{dot_color};"></span><span>Completeness <strong>{completeness}%</strong></span></div>
+    <div class="status-item"><span class="status-dot" style="background:{dot_color};box-shadow:0 0 6px {dot_color};"></span><span>Completeness <strong>{completeness}%</strong></span></div>
+    <div class="status-item">◈ <strong style="color:{T['text_head']}">{filtered_df.shape[0]:,}</strong> rows &nbsp;·&nbsp; <strong style="color:{T['text_head']}">{filtered_df.shape[1]}</strong> cols</div>
+    <div class="status-item" style="color:{filter_clr};">◈ {filter_txt}</div>
     <div class="status-item">◈ {clean_txt}</div>
-    <div class="status-item">◈ {filter_txt}</div>
-    <div class="status-item">◈ {'Day' if not st.session_state.dark_mode else 'Night'} mode</div>
+    <div class="status-item" style="margin-left:auto;">◈ {'☀ Day' if not st.session_state.dark_mode else '◑ Night'}</div>
 </div>""", unsafe_allow_html=True)
 
 st.markdown('<div class="section-label">Analysis Mode</div>', unsafe_allow_html=True)
@@ -655,7 +750,7 @@ with tab_explore:
         if st.button("◈ Add annotation", key="add_ann"):
             if ann_text.strip():
                 st.session_state.annotations.append({"text": ann_text.strip(), "x": ann_x, "y": ann_y, "xref":"paper","yref":"paper","arrow": ann_arrow})
-                st.toast(f"Added: {ann_text.strip()}", icon="◈")
+                st.toast(f"Added: {ann_text.strip()}", icon="✅")
             else:
                 st.toast("Enter some text first", icon="⚠️")
         if st.session_state.annotations:
@@ -992,8 +1087,8 @@ with tab_ai:
             3. Streamlit Cloud → Settings → Secrets:<br><br>
             <code style="background:{T['accent_bg']};padding:4px 10px;font-family:DM Mono,monospace;font-size:12px;">GROQ_API_KEY = "gsk_xxxx"</code>
         </div>""", unsafe_allow_html=True)
-    st.markdown(f'<div style="font-family:DM Sans,sans-serif;font-size:14px;color:{T["text_muted"]};margin-bottom:1.25rem;line-height:1.7;">Ask anything about your data, or let AI generate automatic insights below.</div>', unsafe_allow_html=True)
-    question = st.text_input("Ask a question", placeholder="e.g. What are the main trends? Any outliers?", key="ai_q")
+    st.markdown(f'<div style="font-family:DM Sans,sans-serif;font-size:14px;color:{T["text_muted"]};margin-bottom:1.25rem;line-height:1.7;">Ask anything about your dataset in plain English — or scroll down for auto-generated insights based on your data\'s structure and statistics.</div>', unsafe_allow_html=True)
+    question = st.text_input("Ask a question", placeholder="e.g. Which columns are most correlated? What are the main outliers?", key="ai_q")
     run_ai   = st.button("◈ Analyse with AI", use_container_width=True)
     data_json = build_summary(filtered_df)
     if run_ai or question:
