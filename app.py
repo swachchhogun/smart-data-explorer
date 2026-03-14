@@ -147,24 +147,8 @@ html,body,[data-testid="stAppViewContainer"]{{background:{T['bg']} !important;co
 [data-testid="stFileUploader"]:hover{{border-color:{T['accent']} !important;}}
 [data-testid="stFileUploader"] *{{color:{T['text']} !important;}}
 [data-testid="stFileUploaderDropzone"]{{background:transparent !important;padding:1.5rem !important;}}
-[data-testid="stFileUploader"] button,[data-testid="stFileUploaderDropzone"] button{{
-    background:{T['accent_bg']} !important;
-    border:1px solid {T['accent_bdr']} !important;
-    color:{T['accent']} !important;
-    font-family:'DM Mono',monospace !important;
-    font-size:10px !important;
-    letter-spacing:2px !important;
-    text-transform:uppercase !important;
-    padding:0.5rem 1.2rem !important;
-    border-radius:2px !important;
-    width:auto !important;
-    transition:all 0.2s !important;
-}}
-[data-testid="stFileUploader"] button:hover,[data-testid="stFileUploaderDropzone"] button:hover{{
-    background:{T['accent']} !important;
-    color:#fff !important;
-    border-color:{T['accent']} !important;
-}}
+[data-testid="stFileUploader"] button,[data-testid="stFileUploaderDropzone"] button{{background:{T['accent_bg']} !important;border:1px solid {T['accent_bdr']} !important;color:{T['accent']} !important;font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:2px !important;text-transform:uppercase !important;padding:0.5rem 1.2rem !important;border-radius:2px !important;width:auto !important;transition:all 0.2s !important;}}
+[data-testid="stFileUploader"] button:hover,[data-testid="stFileUploaderDropzone"] button:hover{{background:{T['accent']} !important;color:#fff !important;border-color:{T['accent']} !important;}}
 
 /* ── Tabs ── */
 .stTabs [data-baseweb="tab-list"]{{background:transparent !important;border-bottom:1px solid {T['divider']} !important;gap:0 !important;overflow-x:auto !important;}}
@@ -236,34 +220,9 @@ html,body,[data-testid="stAppViewContainer"]{{background:{T['bg']} !important;co
 
 /* ── Theme toggle pill ── */
 .theme-pill-wrap{{position:fixed;top:0.75rem;right:1rem;z-index:999;}}
-.theme-pill-wrap .stButton>button{{
-    border-radius:20px !important;
-    padding:5px 16px 5px 12px !important;
-    font-size:10px !important;
-    letter-spacing:1px !important;
-    box-shadow:{T['pill_shadow']} !important;
-    white-space:nowrap !important;
-    background:{T['card']} !important;
-    border:1px solid {T['input_bdr']} !important;
-    color:{T['text']} !important;
-    width:auto !important;
-}}
-.theme-pill-wrap .stButton>button:hover{{
-    background:{T['accent']} !important;
-    border-color:{T['accent']} !important;
-    color:#fff !important;
-}}
-
-/* ── Scroll to top button ── */
-#scroll-top-btn{{
-    position:fixed;bottom:3.5rem;right:1rem;z-index:200;
-    width:32px;height:32px;border-radius:50%;
-    background:{T['card']};border:1px solid {T['divider']};
-    color:{T['text_dim']};font-size:14px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;
-    opacity:0;transition:opacity 0.3s,background 0.2s;
-    box-shadow:{T['pill_shadow']};
-}}
+.theme-pill-wrap .stButton>button{{border-radius:20px !important;padding:5px 16px 5px 12px !important;font-size:10px !important;letter-spacing:1px !important;box-shadow:{T['pill_shadow']} !important;white-space:nowrap !important;background:{T['card']} !important;border:1px solid {T['input_bdr']} !important;color:{T['text']} !important;width:auto !important;}}
+.theme-pill-wrap .stButton>button:hover{{background:{T['accent']} !important;border-color:{T['accent']} !important;color:#fff !important;}}
+#scroll-top-btn{{position:fixed;bottom:3.5rem;right:1rem;z-index:200;width:32px;height:32px;border-radius:50%;background:{T['card']};border:1px solid {T['divider']};color:{T['text_dim']};font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s,background 0.2s;box-shadow:{T['pill_shadow']};}}
 #scroll-top-btn:hover{{background:{T['accent']};color:#fff;border-color:{T['accent']};}}
 #scroll-top-btn.visible{{opacity:1;}}
 
@@ -280,16 +239,9 @@ hr{{border-color:{T['divider']} !important;margin:1.5rem 0 !important;}}
 [data-testid="stExpander"]{{border:1px solid {T['divider']} !important;background:{T['card']} !important;}}
 [data-testid="stExpander"] summary{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1.5px !important;text-transform:uppercase !important;color:{T['text_dim']} !important;}}
 [data-testid="stDataFrame"]{{border:1px solid {T['divider']} !important;box-shadow:{T['card_shadow']};}}
-.stRadio label{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1px !important;text-transform:uppercase !important;color:{T['text_dim']} !important;}}
-.stRadio [data-testid="stMarkdownContainer"] p{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1px !important;}}
-[data-testid="stSlider"] label{{font-family:'DM Mono',monospace !important;font-size:10px !important;letter-spacing:1.5px !important;text-transform:uppercase !important;color:{T['text_dim']} !important;}}
-[data-testid="stSlider"] [data-testid="stThumbValue"]{{font-family:'DM Mono',monospace !important;font-size:10px !important;color:{T['accent']} !important;}}
-.stSpinner>div{{border-top-color:{T['accent']} !important;}}
-[data-testid="stMarkdownContainer"] p{{color:{T['text_muted']};line-height:1.7;}}
 </style>
 
 <script>
-// Keyboard shortcut: press T to toggle theme
 document.addEventListener('keydown', function(e) {{
     if (e.key === 't' || e.key === 'T') {{
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
@@ -299,21 +251,13 @@ document.addEventListener('keydown', function(e) {{
         }});
     }}
 }});
-
-// Scroll-to-top button
 (function() {{
     var btn = document.createElement('button');
-    btn.id = 'scroll-top-btn';
-    btn.innerHTML = '↑';
-    btn.title = 'Back to top';
+    btn.id = 'scroll-top-btn'; btn.innerHTML = '↑'; btn.title = 'Back to top';
     btn.onclick = function() {{ window.parent.document.querySelector('.main').scrollTo({{top:0,behavior:'smooth'}}); }};
     document.body.appendChild(btn);
     var mainEl = window.parent.document.querySelector('.main');
-    if (mainEl) {{
-        mainEl.addEventListener('scroll', function() {{
-            btn.classList.toggle('visible', this.scrollTop > 300);
-        }});
-    }}
+    if (mainEl) {{ mainEl.addEventListener('scroll', function() {{ btn.classList.toggle('visible', this.scrollTop > 300); }}); }}
 }})();
 </script>
 """, unsafe_allow_html=True)
@@ -474,6 +418,156 @@ def build_summary(df):
         "missing": df.isnull().sum()[df.isnull().sum() > 0].to_dict(),
     }, default=str)
 
+def nl_to_chart_spec(user_request: str, df_columns: list, numeric_cols: list, cat_cols: list) -> dict:
+    """Ask the LLM to return a JSON chart spec from a natural language request."""
+    key = st.secrets.get("GROQ_API_KEY", "")
+    if not key:
+        return {"error": "no_key"}
+    col_info = (f"All columns: {df_columns}\n"
+                f"Numeric columns: {numeric_cols}\n"
+                f"Categorical columns: {cat_cols}")
+    prompt = f"""You are a data visualization assistant. Given a natural language chart request and available columns, return ONLY a valid JSON object — no explanation, no markdown, no backticks.
+
+{col_info}
+
+User request: "{user_request}"
+
+Return a JSON object with these exact keys:
+- "chart_type": one of: bar, line, scatter, histogram, box, pie, violin, area
+- "x": column name for x-axis (or null)
+- "y": column name for y-axis (or null)
+- "color": column name to color by (or null)
+- "aggregation": one of: mean, sum, count, median, none
+- "title": a short descriptive chart title
+- "error": null, or a short message if the request can't be fulfilled with available columns
+
+Only use column names that exist exactly in the provided lists. Return ONLY the JSON."""
+    try:
+        r = requests.post("https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+            json={"model": "llama-3.3-70b-versatile",
+                  "messages": [{"role": "user", "content": prompt}],
+                  "max_tokens": 300, "temperature": 0.1}, timeout=15)
+        d = r.json()
+        if "choices" not in d:
+            return {"error": d.get("error", {}).get("message", "API error")}
+        raw = d["choices"][0]["message"]["content"].strip()
+        # strip any accidental markdown fences
+        raw = raw.replace("```json", "").replace("```", "").strip()
+        spec = json.loads(raw)
+        return spec
+    except json.JSONDecodeError:
+        return {"error": "Could not parse AI response. Try rephrasing your request."}
+    except requests.exceptions.Timeout:
+        return {"error": "Request timed out. Try again."}
+    except Exception as e:
+        return {"error": str(e)}
+
+def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COLORS, accent, T):
+    """Render a Plotly chart from an AI-generated spec dict."""
+    ct = spec.get("chart_type", "bar")
+    x  = spec.get("x")
+    y  = spec.get("y")
+    color = spec.get("color")
+    agg = spec.get("aggregation", "none")
+    title = spec.get("title", "Chart")
+
+    # Validate columns exist
+    all_cols = list(df.columns)
+    if x and x not in all_cols: x = None
+    if y and y not in all_cols: y = None
+    if color and color not in all_cols: color = None
+
+    plot_df = df.copy()
+
+    # Aggregate if needed
+    if agg != "none" and x and y:
+        fn_map = {"mean": "mean", "sum": "sum", "count": "count", "median": "median"}
+        fn = fn_map.get(agg, "mean")
+        group_cols = [x] + ([color] if color else [])
+        try:
+            plot_df = df.groupby(group_cols)[y].agg(fn).reset_index()
+        except Exception:
+            plot_df = df.copy()
+
+    try:
+        if ct == "bar":
+            if x and y:
+                fig = px.bar(plot_df, x=x, y=y, color=color, title=title,
+                             color_discrete_sequence=COLORS)
+                if not color: fig.update_traces(marker_color=accent, marker_line_width=0)
+            elif x:
+                vc = plot_df[x].value_counts().reset_index()
+                vc.columns = [x, "count"]
+                fig = px.bar(vc, x=x, y="count", title=title)
+                fig.update_traces(marker_color=accent, marker_line_width=0)
+            else:
+                return None, "Bar chart needs at least an X column."
+
+        elif ct == "line":
+            if x and y:
+                fig = px.line(plot_df, x=x, y=y, color=color, title=title,
+                              color_discrete_sequence=COLORS)
+                if not color: fig.update_traces(line_color=accent, line_width=2)
+            else:
+                return None, "Line chart needs X and Y columns."
+
+        elif ct == "scatter":
+            if x and y:
+                fig = px.scatter(plot_df, x=x, y=y, color=color, title=title,
+                                 opacity=0.72, color_discrete_sequence=COLORS,
+                                 trendline="ols" if not color else None)
+                if not color: fig.update_traces(marker=dict(color=accent, size=6))
+            else:
+                return None, "Scatter plot needs X and Y columns."
+
+        elif ct == "histogram":
+            col = x or y
+            if not col: return None, "Histogram needs a column."
+            fig = px.histogram(plot_df, x=col, color=color, title=title,
+                               nbins=30, barmode="overlay", opacity=0.85,
+                               color_discrete_sequence=COLORS)
+            if not color: fig.update_traces(marker_color=accent)
+
+        elif ct == "box":
+            col = y or x
+            if not col: return None, "Box plot needs a column."
+            fig = px.box(plot_df, y=col, x=color, color=color, title=title,
+                         color_discrete_sequence=COLORS, points="outliers")
+            if not color: fig.update_traces(marker_color=accent, line_color=T["blue"])
+
+        elif ct == "violin":
+            col = y or x
+            if not col: return None, "Violin plot needs a column."
+            fig = px.violin(plot_df, y=col, x=color, color=color, title=title,
+                            box=True, color_discrete_sequence=COLORS)
+            if not color: fig.update_traces(fillcolor=T["accent_glow"], line_color=accent)
+
+        elif ct == "pie":
+            if x:
+                vc = plot_df[x].value_counts().reset_index()
+                vc.columns = [x, "count"]
+                vals = y if (y and y in plot_df.columns) else "count"
+                fig = px.pie(vc if vals == "count" else plot_df, names=x, values=vals,
+                             title=title, color_discrete_sequence=COLORS, hole=0.3)
+            else:
+                return None, "Pie chart needs a category column."
+
+        elif ct == "area":
+            if x and y:
+                fig = px.area(plot_df, x=x, y=y, color=color, title=title,
+                              color_discrete_sequence=COLORS)
+                if not color: fig.update_traces(line_color=accent, fillcolor=T["accent_glow"])
+            else:
+                return None, "Area chart needs X and Y columns."
+        else:
+            return None, f"Unknown chart type: {ct}"
+
+        return style_fig(add_annotations_to_fig(fig, anns)), None
+
+    except Exception as e:
+        return None, f"Could not render chart: {e}"
+
 def col_health(s):
     null_pct = s.isnull().mean() * 100
     unique_pct = s.nunique() / max(len(s),1) * 100
@@ -612,31 +706,12 @@ if not st.session_state.show_app:
     <div class="welcome-wrap">
         <div class="welcome-eyebrow">◈ Smart Data Explorer</div>
         <div class="welcome-title">Data<span>Lens</span></div>
-        <div class="welcome-sub">Drop any CSV. Get instant visualizations, AI-powered analysis, data quality profiling, and a formatted PDF report — completely free, no signup needed.</div>
+        <div class="welcome-sub">Upload any CSV and get instant charts, statistics, AI-powered insights, and a beautiful PDF report — all free.</div>
         <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">⚡</div>
-                <div class="feature-title">Auto Clean</div>
-                <div class="feature-desc">Nulls · Dupes · Type inference · Datetime parsing</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">◈</div>
-                <div class="feature-title">9 Chart Modes</div>
-                <div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend · Correlation</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <div class="feature-title">Free AI</div>
-                <div class="feature-desc">Llama 3.3 70B via Groq · Ask anything about your data</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📄</div>
-                <div class="feature-title">Export</div>
-                <div class="feature-desc">PDF report · CSV · Excel · Stats table</div>
-            </div>
-        </div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:{T['text_faint']};text-transform:uppercase;margin-bottom:2rem;">
-            Supports CSV up to 200MB &nbsp;·&nbsp; No signup &nbsp;·&nbsp; No data stored
+            <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Auto Clean</div><div class="feature-desc">Nulls filled · Dupes removed · Types inferred</div></div>
+            <div class="feature-card"><div class="feature-icon">◈</div><div class="feature-title">8 Chart Modes</div><div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend</div></div>
+            <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Free AI</div><div class="feature-desc">Llama 3.3 70B via Groq · No cost · Instant insights</div></div>
+            <div class="feature-card"><div class="feature-icon">📄</div><div class="feature-title">Export</div><div class="feature-desc">PDF report · CSV · Excel · Stats table</div></div>
         </div>
     </div>""", unsafe_allow_html=True)
     _, mid, _ = st.columns([1,2,1])
@@ -709,16 +784,13 @@ st.markdown(f"""<div class="metrics-row">
 </div>""", unsafe_allow_html=True)
 
 dot_color = T["green"] if completeness >= 80 else (T["yellow"] if completeness >= 50 else T["accent"])
-clean_txt = f"{len(clean_report)} ops applied" if (use_cleaned and clean_report) else "raw mode"
-filter_active = filtered_df.shape[0] != base_df.shape[0]
-filter_txt = f"{filtered_df.shape[0]:,} / {base_df.shape[0]:,} rows" if filter_active else "all rows"
-filter_clr = T["accent"] if filter_active else T["text_dim"]
+clean_txt = f"{len(clean_report)} cleanings applied" if (use_cleaned and clean_report) else "raw data"
+filter_txt = f"{filtered_df.shape[0]:,} of {base_df.shape[0]:,} rows" if filtered_df.shape[0] != base_df.shape[0] else "no active filters"
 st.markdown(f"""<div class="status-bar">
-    <div class="status-item"><span class="status-dot" style="background:{dot_color};box-shadow:0 0 6px {dot_color};"></span><span>Completeness <strong>{completeness}%</strong></span></div>
-    <div class="status-item">◈ <strong style="color:{T['text_head']}">{filtered_df.shape[0]:,}</strong> rows &nbsp;·&nbsp; <strong style="color:{T['text_head']}">{filtered_df.shape[1]}</strong> cols</div>
-    <div class="status-item" style="color:{filter_clr};">◈ {filter_txt}</div>
+    <div class="status-item"><span class="status-dot" style="background:{dot_color};"></span><span>Completeness <strong>{completeness}%</strong></span></div>
     <div class="status-item">◈ {clean_txt}</div>
-    <div class="status-item" style="margin-left:auto;">◈ {'☀ Day' if not st.session_state.dark_mode else '◑ Night'}</div>
+    <div class="status-item">◈ {filter_txt}</div>
+    <div class="status-item">◈ {'Day' if not st.session_state.dark_mode else 'Night'} mode</div>
 </div>""", unsafe_allow_html=True)
 
 st.markdown('<div class="section-label">Analysis Mode</div>', unsafe_allow_html=True)
@@ -728,8 +800,8 @@ analysis_type = st.selectbox("Mode", [
     "Heatmap", "Box Plot Comparison", "Scatter Matrix",
 ], label_visibility="collapsed")
 
-tab_explore, tab_quality, tab_types, tab_stats, tab_ai, tab_report = st.tabs([
-    "◈  Explore", "◈  Data Quality", "◈  Column Types",
+tab_explore, tab_nl, tab_quality, tab_types, tab_stats, tab_ai, tab_report = st.tabs([
+    "◈  Explore", "◈  AI Chart", "◈  Data Quality", "◈  Column Types",
     "◈  Statistics", "◈  AI Insights", "◈  PDF Report"
 ])
 accent = T["accent"]
@@ -938,6 +1010,87 @@ with tab_explore:
     except Exception as e:
         st.markdown(f'<div class="error-box"><strong>Chart error</strong><br>Try a different column or mode.<br><small style="opacity:0.4;font-family:DM Mono,monospace;font-size:11px;">{e}</small></div>', unsafe_allow_html=True)
 
+# ═══ AI CHART ══════════════════════════════════════════════
+with tab_nl:
+    st.markdown('<div class="section-label">Natural Language Chart Builder</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-family:DM Sans,sans-serif;font-size:14px;color:{T["text_muted"]};margin-bottom:1.5rem;line-height:1.8;">Describe any chart in plain English and AI will build it instantly. No need to pick axes or chart types — just say what you want to see.</div>', unsafe_allow_html=True)
+
+    # Example prompts
+    examples = [
+        "bar chart of count by category",
+        "scatter plot of the two most correlated columns",
+        "histogram of the main numeric column",
+        "pie chart showing top categories",
+        "line chart of values over time",
+        "box plot comparing a numeric column by category",
+    ]
+    st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:{T["text_dim"]};margin-bottom:0.6rem;">Try an example</div>', unsafe_allow_html=True)
+    ex_cols = st.columns(3)
+    for i, ex in enumerate(examples):
+        with ex_cols[i % 3]:
+            if st.button(ex, key=f"nl_ex_{i}"):
+                st.session_state["nl_prompt"] = ex
+                st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    nl_prompt = st.text_input(
+        "Describe your chart",
+        value=st.session_state.get("nl_prompt", ""),
+        placeholder='e.g. "bar chart of average sales by region" or "scatter plot of age vs income"',
+        key="nl_input"
+    )
+    nl_go = st.button("◈ Generate Chart", use_container_width=True, key="nl_go")
+
+    if nl_go and nl_prompt.strip():
+        st.session_state["nl_prompt"] = nl_prompt.strip()
+        with st.spinner("Reading your request…"):
+            spec = nl_to_chart_spec(
+                nl_prompt.strip(),
+                list(filtered_df.columns),
+                numeric_cols, cat_cols
+            )
+
+        if spec.get("error") == "no_key":
+            st.markdown(f"""<div class="error-box"><strong>Groq API key needed for AI Chart</strong><br><br>
+                1. Sign up free at <strong>console.groq.com</strong><br>
+                2. Create an API key<br>
+                3. Streamlit Cloud → Settings → Secrets → add:<br><br>
+                <code style="background:{T['accent_bg']};padding:4px 10px;font-family:DM Mono,monospace;font-size:12px;">GROQ_API_KEY = "gsk_xxxx"</code>
+            </div>""", unsafe_allow_html=True)
+        elif spec.get("error"):
+            st.markdown(f'<div class="error-box"><strong>Could not generate chart</strong><br>{spec["error"]}<br><br>Try rephrasing — e.g. mention a specific column name from your dataset.</div>', unsafe_allow_html=True)
+        else:
+            # Show what AI decided
+            x_lbl  = spec.get("x") or "—"
+            y_lbl  = spec.get("y") or "—"
+            ct_lbl = spec.get("chart_type", "—").title()
+            ag_lbl = spec.get("aggregation", "none")
+            co_lbl = spec.get("color") or "—"
+            st.markdown(f"""<div class="status-bar" style="margin-bottom:1.25rem;">
+                <div class="status-item">◈ Type <strong style="color:{T['text_head']}">{ct_lbl}</strong></div>
+                <div class="status-item">◈ X <strong style="color:{T['text_head']}">{x_lbl}</strong></div>
+                <div class="status-item">◈ Y <strong style="color:{T['text_head']}">{y_lbl}</strong></div>
+                <div class="status-item">◈ Agg <strong style="color:{T['text_head']}">{ag_lbl}</strong></div>
+                <div class="status-item">◈ Color <strong style="color:{T['text_head']}">{co_lbl}</strong></div>
+            </div>""", unsafe_allow_html=True)
+
+            fig, err = render_nl_chart(spec, filtered_df, style_fig, add_annotations_to_fig, anns, COLORS, accent, T)
+            if err:
+                st.markdown(f'<div class="error-box"><strong>Render error</strong><br>{err}</div>', unsafe_allow_html=True)
+            else:
+                st.plotly_chart(fig, use_container_width=True)
+                st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:{T["text_faint"]};margin-top:0.5rem;">Generated from: "{nl_prompt.strip()}"</div>', unsafe_allow_html=True)
+
+    elif not nl_prompt.strip() and not nl_go:
+        # Show available columns as inspiration
+        st.markdown(f'<div class="section-label">Your columns</div>', unsafe_allow_html=True)
+        cols_html = "".join([
+            f'<span style="display:inline-block;background:{T["accent_bg"]};border:1px solid {T["accent_bdr"]};color:{T["accent"]};font-family:DM Mono,monospace;font-size:9px;padding:3px 10px;margin:3px;border-radius:2px;">{c}</span>'
+            for c in filtered_df.columns
+        ])
+        st.markdown(f'<div style="margin-bottom:1rem;">{cols_html}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="font-family:DM Mono,monospace;font-size:10px;color:{T["text_faint"]};letter-spacing:1px;">Mention these column names in your request for best results.</div>', unsafe_allow_html=True)
+
 # ═══ DATA QUALITY ══════════════════════════════════════════
 with tab_quality:
     st.markdown('<div class="section-label">Before vs After Cleaning</div>', unsafe_allow_html=True)
@@ -1009,12 +1162,12 @@ with tab_types:
     with col1:
         if st.button("◈ Apply override", key="apply_type"):
             if sel_type != "Auto (keep as-is)":
-                st.session_state.type_overrides[sel_col] = sel_type; st.toast(f"'{sel_col}' → {sel_type}", icon="✓")
+                st.session_state.type_overrides[sel_col] = sel_type; st.toast(f"'{sel_col}' → {sel_type}", icon="✅")
             else:
-                st.session_state.type_overrides.pop(sel_col, None); st.toast(f"Override removed for '{sel_col}'", icon="✓")
+                st.session_state.type_overrides.pop(sel_col, None); st.toast(f"Override removed for '{sel_col}'", icon="✅")
     with col2:
         if st.button("✕ Clear all overrides", key="clear_types"):
-            st.session_state.type_overrides = {}; st.toast("All overrides cleared", icon="✓")
+            st.session_state.type_overrides = {}; st.toast("All overrides cleared", icon="✅")
     if st.session_state.type_overrides:
         st.markdown("<hr>", unsafe_allow_html=True)
         st.markdown('<div class="section-label">Active Overrides</div>', unsafe_allow_html=True)
@@ -1087,8 +1240,8 @@ with tab_ai:
             3. Streamlit Cloud → Settings → Secrets:<br><br>
             <code style="background:{T['accent_bg']};padding:4px 10px;font-family:DM Mono,monospace;font-size:12px;">GROQ_API_KEY = "gsk_xxxx"</code>
         </div>""", unsafe_allow_html=True)
-    st.markdown(f'<div style="font-family:DM Sans,sans-serif;font-size:14px;color:{T["text_muted"]};margin-bottom:1.25rem;line-height:1.7;">Ask anything about your dataset in plain English — or scroll down for auto-generated insights based on your data\'s structure and statistics.</div>', unsafe_allow_html=True)
-    question = st.text_input("Ask a question", placeholder="e.g. Which columns are most correlated? What are the main outliers?", key="ai_q")
+    st.markdown(f'<div style="font-family:DM Sans,sans-serif;font-size:14px;color:{T["text_muted"]};margin-bottom:1.25rem;line-height:1.7;">Ask anything about your data, or let AI generate automatic insights below.</div>', unsafe_allow_html=True)
+    question = st.text_input("Ask a question", placeholder="e.g. What are the main trends? Any outliers?", key="ai_q")
     run_ai   = st.button("◈ Analyse with AI", use_container_width=True)
     data_json = build_summary(filtered_df)
     if run_ai or question:
