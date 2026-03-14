@@ -515,7 +515,8 @@ def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COL
         elif ct == "scatter":
             if x and y:
                 fig = px.scatter(plot_df, x=x, y=y, color=color, title=title,
-                                 opacity=0.72, color_discrete_sequence=COLORS)
+                                 opacity=0.72, color_discrete_sequence=COLORS,
+                                 trendline="ols" if not color else None)
                 if not color: fig.update_traces(marker=dict(color=accent, size=6))
             else:
                 return None, "Scatter plot needs X and Y columns."
@@ -947,7 +948,7 @@ with tab_explore:
                 size_col  = st.selectbox("Size by (optional)", ["None"]+numeric_cols, key="sc_sz")
                 ca = None if color_col=="None" else color_col; sa = None if size_col=="None" else size_col
                 fig = px.scatter(filtered_df, x=x_col, y=y_col, color=ca, size=sa, title=f"{y_col} vs {x_col}",
-                                 opacity=0.72,
+                                 opacity=0.72, trendline="ols" if ca is None else None,
                                  color_discrete_sequence=COLORS, color_continuous_scale=[[0,T["card"]],[1,accent]])
                 if ca is None and sa is None:
                     fig.update_traces(marker=dict(color=accent, size=6, line=dict(color="rgba(0,0,0,0.12)", width=1)))
