@@ -480,7 +480,7 @@ def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COL
 
     plot_df = df.copy()
 
-    # Aggregate if needed
+    # Aggregate if needed — skip if already pre-aggregated (agg=none + both x and y exist)
     if agg != "none" and x and y:
         fn_map = {"mean": "mean", "sum": "sum", "count": "count", "median": "median"}
         fn = fn_map.get(agg, "mean")
@@ -489,6 +489,19 @@ def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COL
             plot_df = df.groupby(group_cols)[y].agg(fn).reset_index()
         except Exception:
             plot_df = df.copy()
+    # If agg=none but x is categorical with few unique values and y is numeric,
+    # the data might already be pre-aggregated (e.g. summary tables) — use as-is.
+    # For raw datasets with many rows per category, auto-sum to avoid overplotting.
+    elif agg == "none" and x and y and x in df.columns and y in df.columns:
+        x_unique = df[x].nunique()
+        n_rows   = len(df)
+        # If more rows than unique x values → likely raw data, auto-aggregate by sum
+        if x_unique < n_rows and pd.api.types.is_numeric_dtype(df[y]):
+            try:
+                group_cols = [x] + ([color] if color else [])
+                plot_df = df.groupby(group_cols)[y].sum().reset_index()
+            except Exception:
+                plot_df = df.copy()
 
     try:
         if ct == "bar":
