@@ -423,25 +423,33 @@ def nl_to_chart_spec(user_request: str, df_columns: list, numeric_cols: list, ca
     key = st.secrets.get("GROQ_API_KEY", "")
     if not key:
         return {"error": "no_key"}
-    col_info = (f"All columns: {df_columns}\n"
-                f"Numeric columns: {numeric_cols}\n"
-                f"Categorical columns: {cat_cols}")
-    prompt = f"""You are a data visualization assistant. Given a natural language chart request and available columns, return ONLY a valid JSON object — no explanation, no markdown, no backticks.
+
+    col_info = (f"Categorical columns (text/labels, use for slices/groups/x-axis): {cat_cols}\n"
+                f"Numeric columns (numbers, use for sizes/values/y-axis): {numeric_cols}\n"
+                f"All columns: {df_columns}")
+
+    prompt = f"""You are a data visualization assistant. Return ONLY a valid JSON object — no explanation, no markdown, no backticks.
 
 {col_info}
 
 User request: "{user_request}"
 
-Return a JSON object with these exact keys:
+STRICT RULES — follow exactly:
 - "chart_type": one of: bar, line, scatter, histogram, box, pie, violin, area
-- "x": column name for x-axis (or null)
-- "y": column name for y-axis (or null)
-- "color": column name to color by (or null)
-- "aggregation": one of: mean, sum, count, median, none
-- "title": a short descriptive chart title
-- "error": null, or a short message if the request can't be fulfilled with available columns
+- "x": MUST be a categorical column name for bar/pie/box/violin, or numeric for scatter/histogram. null if not needed.
+- "y": MUST always be a numeric column name, or null.
+- "color": optional categorical column for grouping, or null.
+- "aggregation": one of: sum, mean, median, count, none. Use "count" when no numeric value column exists. Use "none" only for scatter or pre-aggregated data.
+- "title": short descriptive title
+- "error": null, or brief message if request cannot be fulfilled
 
-Only use column names that exist exactly in the provided lists. Return ONLY the JSON."""
+FOR PIE CHARTS specifically:
+- "x" MUST be a categorical column (the slices)
+- "y" MUST be a numeric column (slice size) or null if counting
+- NEVER put a categorical column in "y"
+
+Only use column names that exist exactly in the lists above. Return ONLY the JSON."""
+
     try:
         r = requests.post("https://api.groq.com/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
@@ -452,10 +460,52 @@ Only use column names that exist exactly in the provided lists. Return ONLY the 
         if "choices" not in d:
             return {"error": d.get("error", {}).get("message", "API error")}
         raw = d["choices"][0]["message"]["content"].strip()
-        # strip any accidental markdown fences
         raw = raw.replace("```json", "").replace("```", "").strip()
         spec = json.loads(raw)
+
+        # ── Post-process: auto-correct common AI mistakes ──────────────
+        ct = spec.get("chart_type", "bar")
+
+        # Ensure only real column names are used
+        def valid_col(c):
+            return c if c and c in df_columns else None
+
+        spec["x"]     = valid_col(spec.get("x"))
+        spec["y"]     = valid_col(spec.get("y"))
+        spec["color"] = valid_col(spec.get("color"))
+
+        # For pie: x must be categorical, y must be numeric or null
+        if ct == "pie":
+            x, y = spec.get("x"), spec.get("y")
+            # If x is numeric and y is categorical, swap them
+            if x in numeric_cols and y in cat_cols:
+                spec["x"], spec["y"] = y, x
+            # If x is numeric and y is null, find a categorical column
+            elif x in numeric_cols and not y:
+                spec["y"] = spec["x"]   # move numeric to y
+                spec["x"] = cat_cols[0] if cat_cols else None
+            # If x is null but color or y has a categorical column, promote it
+            elif not x:
+                for candidate in [spec.get("color"), spec.get("y")]:
+                    if candidate and candidate in cat_cols:
+                        spec["x"] = candidate
+                        if candidate == spec.get("y"):   spec["y"] = None
+                        if candidate == spec.get("color"): spec["color"] = None
+                        break
+
+        # For bar/box/violin: x should be categorical
+        if ct in ("bar", "box", "violin"):
+            x, y = spec.get("x"), spec.get("y")
+            if x in numeric_cols and y in cat_cols:
+                spec["x"], spec["y"] = y, x  # swap
+
+        # For scatter/line: both x and y should ideally be numeric
+        if ct in ("scatter", "line"):
+            if spec.get("x") in cat_cols and not spec.get("y"):
+                spec["y"] = numeric_cols[0] if numeric_cols else None
+
         return spec
+
     except json.JSONDecodeError:
         return {"error": "Could not parse AI response. Try rephrasing your request."}
     except requests.exceptions.Timeout:
@@ -557,13 +607,25 @@ def render_nl_chart(spec: dict, df, style_fig, add_annotations_to_fig, anns, COL
             if not color: fig.update_traces(fillcolor=T["accent_glow"], line_color=accent)
 
         elif ct == "pie":
-            # AI sometimes puts the category in color instead of x — fall back gracefully
-            name_col = x or color
-            if name_col and name_col in plot_df.columns:
-                if y and y in plot_df.columns:
-                    # aggregate y by name_col
-                    agg_df = plot_df.groupby(name_col)[y].sum().reset_index()
-                    fig = px.pie(agg_df, names=name_col, values=y,
+            # AI can put the category in x, y, or color — check all three
+            # Prefer whichever one is actually categorical (non-numeric)
+            candidates = [c for c in [x, y, color] if c and c in plot_df.columns]
+            name_col   = None
+            value_col  = None
+            for c in candidates:
+                if not pd.api.types.is_numeric_dtype(plot_df[c]):
+                    name_col = c
+                elif value_col is None:
+                    value_col = c
+            # If everything is numeric, just use the first candidate as names
+            if not name_col and candidates:
+                name_col = candidates[0]
+                value_col = candidates[1] if len(candidates) > 1 else None
+
+            if name_col:
+                if value_col and value_col in plot_df.columns:
+                    agg_df = plot_df.groupby(name_col)[value_col].sum().reset_index()
+                    fig = px.pie(agg_df, names=name_col, values=value_col,
                                  title=title, color_discrete_sequence=COLORS, hole=0.3)
                 else:
                     vc = plot_df[name_col].value_counts().reset_index()
