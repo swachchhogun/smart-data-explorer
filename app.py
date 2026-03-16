@@ -8,7 +8,7 @@ import json, requests, io, datetime
 st.set_page_config(page_title="DataLens", page_icon="◈", layout="wide", initial_sidebar_state="collapsed")
 
 for k, v in [("annotations", []), ("type_overrides", {}), ("show_app", False),
-             ("dark_mode", True), ("last_ai_text", "")]:
+             ("dark_mode", True), ("last_ai_text", ""), ("sample_df", None), ("sample_name", "")]:
     if k not in st.session_state:
         st.session_state[k] = v
 
@@ -666,6 +666,75 @@ def generate_pdf_report(df, filename, ai_text, clean_report):
     except ImportError: return None
     except Exception as e: st.error(f"PDF error: {e}"); return None
 
+def make_sample_dataset(name: str) -> pd.DataFrame:
+    rng = np.random.default_rng(42)
+    if name == "Superstore Sales":
+        n = 500
+        regions    = ["North","South","East","West"]
+        categories = ["Furniture","Technology","Office Supplies"]
+        segments   = ["Consumer","Corporate","Home Office"]
+        return pd.DataFrame({
+            "Order Date":  pd.date_range("2022-01-01", periods=n, freq="D").strftime("%Y-%m-%d"),
+            "Region":      rng.choice(regions, n),
+            "Category":    rng.choice(categories, n),
+            "Segment":     rng.choice(segments, n),
+            "Sales":       (rng.exponential(200, n) + 20).round(2),
+            "Profit":      (rng.normal(30, 60, n)).round(2),
+            "Discount":    rng.choice([0, 0.1, 0.2, 0.3, 0.5], n),
+            "Quantity":    rng.integers(1, 15, n),
+            "Ship Days":   rng.integers(1, 8, n),
+        })
+    elif name == "Student Scores":
+        n = 300
+        return pd.DataFrame({
+            "Student ID":  [f"S{i:04d}" for i in range(1, n+1)],
+            "Gender":      rng.choice(["Male","Female"], n),
+            "Course":      rng.choice(["Statistics","Mathematics","Computer Science","Economics"], n),
+            "Attendance":  np.clip(rng.normal(78, 12, n), 40, 100).round(1),
+            "Midterm":     np.clip(rng.normal(62, 15, n), 10, 100).round(1),
+            "Final":       np.clip(rng.normal(65, 14, n), 10, 100).round(1),
+            "Assignment":  np.clip(rng.normal(72, 10, n), 20, 100).round(1),
+            "Grade":       rng.choice(["A","B","C","D","F"], n, p=[0.2,0.35,0.25,0.15,0.05]),
+        })
+    elif name == "E-Commerce Orders":
+        n = 600
+        countries  = ["India","USA","UK","Germany","France","Canada"]
+        products   = ["Laptop","Phone","Tablet","Headphones","Keyboard","Monitor","Mouse","Webcam"]
+        statuses   = ["Delivered","Shipped","Cancelled","Returned"]
+        return pd.DataFrame({
+            "Order Date":  pd.date_range("2023-01-01", periods=n, freq="14H").strftime("%Y-%m-%d"),
+            "Country":     rng.choice(countries, n),
+            "Product":     rng.choice(products, n),
+            "Status":      rng.choice(statuses, n, p=[0.7,0.15,0.1,0.05]),
+            "Units":       rng.integers(1, 6, n),
+            "Unit Price":  rng.choice([299,499,799,999,1299,49,29,89], n).astype(float),
+            "Revenue":     None,
+            "Rating":      np.clip(rng.normal(4.1, 0.7, n), 1, 5).round(1),
+            "Return":      rng.choice([0, 1], n, p=[0.92, 0.08]),
+        }).assign(Revenue=lambda d: (d["Units"] * d["Unit Price"]).round(2))
+    elif name == "Health & Fitness":
+        n = 365
+        dates = pd.date_range("2023-01-01", periods=n, freq="D")
+        steps = np.clip(rng.normal(7500, 2500, n), 500, 25000).astype(int)
+        return pd.DataFrame({
+            "Date":         dates.strftime("%Y-%m-%d"),
+            "Day":          dates.day_name(),
+            "Steps":        steps,
+            "Calories":     (steps * 0.04 + rng.normal(0, 50, n)).clip(200, 1200).round(0).astype(int),
+            "Sleep Hrs":    np.clip(rng.normal(7.2, 1.1, n), 3, 10).round(1),
+            "Heart Rate":   np.clip(rng.normal(72, 9, n), 50, 110).round(0).astype(int),
+            "Water (L)":    np.clip(rng.normal(2.1, 0.5, n), 0.5, 4.5).round(1),
+            "Mood":         rng.choice(["Great","Good","Okay","Tired","Bad"], n, p=[0.2,0.4,0.25,0.1,0.05]),
+        })
+    return pd.DataFrame()
+
+SAMPLES = {
+    "Superstore Sales":  {"icon": "🛒", "rows": 500,  "cols": 9,  "desc": "Sales, profit & shipping across regions"},
+    "Student Scores":    {"icon": "🎓", "rows": 300,  "cols": 8,  "desc": "Marks, attendance & grades by course"},
+    "E-Commerce Orders": {"icon": "📦", "rows": 600,  "cols": 9,  "desc": "Orders, revenue & ratings by country"},
+    "Health & Fitness":  {"icon": "❤️", "rows": 365,  "cols": 8,  "desc": "Daily steps, sleep & wellness tracking"},
+}
+
 # ── Sidebar ───────────────────────────────────────────────
 with st.sidebar:
     st.markdown('<div class="sidebar-brand">Data<span>Lens</span></div>', unsafe_allow_html=True)
@@ -692,7 +761,8 @@ with st.sidebar:
                            file_name="datalens_export.csv", mime="text/csv", use_container_width=True)
         if st.button("← Start over", use_container_width=True):
             for k in ["working_df","filtered_df","raw_df","cleaned_df","clean_report",
-                      "show_app","annotations","type_overrides"]:
+                      "show_app","annotations","type_overrides","sample_df","sample_name",
+                      "nl_run_prompt","nl_auto_run","last_ai_text"]:
                 st.session_state.pop(k, None)
             st.rerun()
     else:
@@ -717,14 +787,38 @@ if not st.session_state.show_app:
         <div class="welcome-sub">Upload any CSV and get instant charts, statistics, AI-powered insights, and a beautiful PDF report — all free.</div>
         <div class="feature-grid">
             <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Auto Clean</div><div class="feature-desc">Nulls filled · Dupes removed · Types inferred</div></div>
-            <div class="feature-card"><div class="feature-icon">◈</div><div class="feature-title">8 Chart Modes</div><div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend</div></div>
+            <div class="feature-card"><div class="feature-icon">◈</div><div class="feature-title">9 Chart Modes</div><div class="feature-desc">Histogram · Heatmap · Scatter Matrix · Trend</div></div>
             <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-title">Free AI</div><div class="feature-desc">Llama 3.3 70B via Groq · No cost · Instant insights</div></div>
             <div class="feature-card"><div class="feature-icon">📄</div><div class="feature-title">Export</div><div class="feature-desc">PDF report · CSV · Excel · Stats table</div></div>
         </div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:{T['text_faint']};text-transform:uppercase;margin-bottom:2rem;">
+            Supports CSV up to 200MB &nbsp;·&nbsp; No signup &nbsp;·&nbsp; No data stored
+        </div>
     </div>""", unsafe_allow_html=True)
+
+    # ── Sample datasets ──
+    st.markdown(f'<div class="section-label">Try a sample dataset</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="font-family:DM Sans,sans-serif;font-size:14px;color:{T["text_muted"]};margin-bottom:1.25rem;line-height:1.7;">No CSV? Load one of these instantly and explore all features right away.</div>', unsafe_allow_html=True)
+
+    s_cols = st.columns(4)
+    for i, (sname, smeta) in enumerate(SAMPLES.items()):
+        with s_cols[i]:
+            st.markdown(f"""<div style="background:{T['card']};border:1px solid {T['divider']};border-top:2px solid {T['accent']};padding:1.25rem 1rem 1rem;margin-bottom:0.5rem;">
+                <div style="font-size:24px;margin-bottom:0.5rem;">{smeta['icon']}</div>
+                <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:{T['text_head']};margin-bottom:0.3rem;">{sname}</div>
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:{T['text_dim']};letter-spacing:1px;text-transform:uppercase;margin-bottom:0.5rem;">{smeta['rows']} rows · {smeta['cols']} cols</div>
+                <div style="font-family:'DM Sans',sans-serif;font-size:12px;color:{T['text_muted']};line-height:1.5;">{smeta['desc']}</div>
+            </div>""", unsafe_allow_html=True)
+            if st.button(f"Load →", key=f"sample_{i}", use_container_width=True):
+                st.session_state.sample_df   = make_sample_dataset(sname)
+                st.session_state.sample_name = sname
+                st.session_state.show_app    = True
+                st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
     _, mid, _ = st.columns([1,2,1])
     with mid:
-        if st.button("◈ Get started — Upload a CSV", use_container_width=True):
+        if st.button("◈ Upload your own CSV instead", use_container_width=True):
             st.session_state.show_app = True; st.rerun()
     st.stop()
 
@@ -732,12 +826,24 @@ if not st.session_state.show_app:
 st.markdown('<div class="section-label">Upload Your Data</div>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("Upload CSV", type=["csv"], label_visibility="collapsed")
 
-if uploaded_file is None:
+# If a new file is uploaded, clear any loaded sample
+if uploaded_file is not None:
+    st.session_state.sample_df   = None
+    st.session_state.sample_name = ""
+
+# Determine data source: uploaded file or sample dataset
+if uploaded_file is None and st.session_state.get("sample_df") is not None:
+    raw_df     = st.session_state.sample_df.copy()
+    load_err   = None
+    _is_sample = True
+elif uploaded_file is not None:
+    with st.spinner("Reading file…"):
+        raw_df, load_err = safe_read_csv(uploaded_file)
+    _is_sample = False
+else:
     st.markdown(f'<div class="empty-state" style="margin-top:1rem;"><div class="empty-state-icon">📂</div><div class="empty-state-title">Drop a CSV file above</div><div class="empty-state-sub">Any CSV · Auto-cleaned · Free AI · PDF report</div></div>', unsafe_allow_html=True)
     st.stop()
-
-with st.spinner("Reading file…"):
-    raw_df, load_err = safe_read_csv(uploaded_file)
+    _is_sample = False
 
 if load_err or raw_df is None:
     st.markdown(f'<div class="error-box"><strong>Could not load file</strong><br>{load_err}</div>', unsafe_allow_html=True); st.stop()
@@ -770,12 +876,12 @@ if clean_report and use_cleaned:
         for n in clean_report:
             st.markdown(f'<span class="clean-badge">✓ {n}</span>', unsafe_allow_html=True)
 
-fn = uploaded_file.name if uploaded_file else "dataset.csv"
+fn = st.session_state.get("sample_name") or (uploaded_file.name if uploaded_file else "dataset.csv")
 
 st.markdown(f"""<div class="hero">
     <div class="hero-eyebrow">◈ Smart Data Explorer</div>
     <div class="hero-title">Data<span>Lens</span></div>
-    <div class="hero-file">◈ {fn} · {filtered_df.shape[0]:,} rows · {filtered_df.shape[1]} cols</div>
+    <div class="hero-file">◈ {fn} · {filtered_df.shape[0]:,} rows · {filtered_df.shape[1]} cols{' &nbsp;<span style="background:' + T['accent_bg'] + ';border:1px solid ' + T['accent_bdr'] + ';color:' + T['accent'] + ';font-size:8px;padding:2px 7px;border-radius:2px;letter-spacing:1px;">SAMPLE</span>' if _is_sample else ''}</div>
 </div>""", unsafe_allow_html=True)
 
 missing_count = int(filtered_df.isnull().sum().sum())
